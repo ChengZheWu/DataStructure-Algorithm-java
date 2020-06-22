@@ -13,15 +13,20 @@
  *
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.RedBlackBST;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.Stopwatch;
 
 import java.util.LinkedList;
 
 
 public class PointST<Value> {
     private RedBlackBST<Point2D, Value> points;
+    private int call = 0;
 
     // construct an empty symbol table of points
     public PointST() {
@@ -79,13 +84,36 @@ public class PointST<Value> {
         if (p == null) throw new IllegalArgumentException();
         if (points.size() == 0) return null;
         Point2D tmp = points.min();
-        for (Point2D k : points.keys())
+        for (Point2D k : points.keys()) {
+            call++;
             if (p.distanceSquaredTo(k) < p.distanceSquaredTo(tmp))
                 tmp = k;
+        }
         return tmp;
     }
 
     // unit testing (required)
     public static void main(String[] args) {
+        String filename = args[0];
+        In in = new In(filename);
+
+        PointST<Integer> ptree = new PointST<>();
+
+        for (int i = 0; !in.isEmpty(); i++) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            ptree.put(p, i);
+        }
+        double x = StdRandom.uniform(0.0, 1.0);
+        double y = StdRandom.uniform(0.0, 1.0);
+        Point2D p = new Point2D(x, y);
+        Stopwatch stopwatch = new Stopwatch();
+        ptree.nearest(p);
+        double time = stopwatch.elapsedTime();
+
+        StdOut.println("num of nearest calling: " + ptree.call);
+        StdOut.println("time: " + time);
+        StdOut.println(ptree.call / time);
     }
 }
