@@ -13,13 +13,18 @@
  *
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.Stopwatch;
 
 public class KdTreeST<Value> {
     private Node root;
     private int size;
+    private int call = 0;
 
     private class Node {
         private Point2D p;     // the point
@@ -165,6 +170,7 @@ public class KdTreeST<Value> {
     }
 
     private Point2D nearest(Node n, Point2D p, Point2D closet) {
+        call++;
         if (n.p.equals(p)) return n.p;
         double closetdis = closet.distanceSquaredTo(p);
         if (Double.compare(n.rect.distanceSquaredTo(p), closetdis) >= 0)
@@ -191,6 +197,26 @@ public class KdTreeST<Value> {
 
     // unit testing (required)
     public static void main(String[] args) {
+        String filename = args[0];
+        In in = new In(filename);
 
+        KdTreeST<Integer> kdtree = new KdTreeST<Integer>();
+
+        for (int i = 0; !in.isEmpty(); i++) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            kdtree.put(p, i);
+        }
+        double x = StdRandom.uniform(0.0, 1.0);
+        double y = StdRandom.uniform(0.0, 1.0);
+        Point2D p = new Point2D(x, y);
+        Stopwatch stopwatch = new Stopwatch();
+        kdtree.nearest(p);
+        double time = stopwatch.elapsedTime();
+
+        StdOut.println("num of nearest calling: " + kdtree.call);
+        StdOut.println("time: " + time);
+        StdOut.println(kdtree.call / time);
     }
 }
